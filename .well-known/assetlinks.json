@@ -2,13 +2,9 @@
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
-    "package_name": "com.your_domain.tacticalops", 
-    // TODO: Replace this with your actual Android app package name later.
+    "package_name": "app.netlify.tacticalops_capture.twa", 
     "sha256_cert_fingerprints": [
-      "00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00" 
-      // TODO: Replace this with the SHA-256 fingerprint of your app signing certificate later.
-      // You can generate this using Android Studio or keytool.
-      // Example: keytool -list -v -keystore your_keystore.jks -alias your_alias_name
+      "DC:11:AD:E2:E3:E4:D3:EF:F2:F1:A4:69:47:42:1A:A8:02:C7:C9:70:EE:96:68:DB:2E:BB:52:32:DB:2B:EF:A6"
     ]
   }
 }] 
