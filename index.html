@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Capture the Base</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#4CAF50">
+</head>
+<body>
+    <div id="game-container">
+
+        <!-- Title Screen Overlay -->
+        <div id="title-screen">
+            <h1>TacticalOps</h1>
+            <p>Capture The Base</p> 
+            <button id="title-enter-button">Enter</button>
+        </div>
+
+        <!-- Top Bar: Scores & Timer -->
+        <div id="top-bar">
+            <div id="score-red">Red: 0</div>
+            <div id="game-timer">Time: 00:00</div>
+            <div id="score-blue">Blue: 0</div>
+        </div>
+
+        <!-- Center Area: Camera & Status -->
+        <div id="center-area">
+            <div id="status-left" class="side-panel">
+                <h2>Status</h2>
+                <p id="game-status">Waiting to start...</p>
+                <p id="base-holder">Base Holder: None</p>
+            </div>
+
+            <div id="camera-container">
+                <video id="camera-feed" playsinline autoplay muted hidden></video>
+                <div id="grid-overlay"></div>
+                <div id="scan-indicator">Scan Area</div>
+                <div id="team-indicator">--</div>
+
+                <!-- Scan Cooldown Indicator -->
+                <div id="scan-cooldown-bar-container">
+                    <div id="scan-cooldown-bar-fill"></div>
+                </div>
+
+            </div>
+
+            <div id="status-right" class="side-panel">
+                <h2>Announcements</h2>
+                <div id="announcements">
+                    Welcome!
+                </div>
+                <h2>Instructions</h2>
+                <p>Point camera at QR code.</p>
+            </div>
+        </div>
+
+        <!-- Bottom Bar: Controls -->
+        <div id="bottom-bar">
+            <button id="start-button">Start Game</button>
+            <button id="camera-toggle-button">Show Camera</button>
+            <button id="qr-info-button">QR/Info</button>
+            <button id="settings-button">Settings</button>
+        </div>
+    </div>
+
+    <!-- Remove html5-qrcode library -->
+    <!-- <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script> -->
+
+    <!-- Add jsQR library -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <script src="script.js"></script>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal" hidden>
+        <div class="modal-content">
+            <span class="close-button" id="close-settings-button">&times;</span>
+            <h2>Settings</h2>
+
+            <div class="setting-item">
+                <label for="bgm-volume">BGM Volume:</label>
+                <input type="range" id="bgm-volume" name="bgm-volume" min="0" max="1" step="0.1">
+                <span id="bgm-volume-value"></span>
+            </div>
+
+            <div class="setting-item">
+                <label for="sfx-volume">SFX Volume:</label>
+                <input type="range" id="sfx-volume" name="sfx-volume" min="0" max="1" step="0.1">
+                <span id="sfx-volume-value"></span>
+            </div>
+
+            <div class="setting-item">
+                <label for="game-duration">Game Duration (minutes):</label>
+                <input type="number" id="game-duration" name="game-duration" min="1" max="15" step="1">
+            </div>
+
+            <div class="setting-item">
+                <label>Camera:</label>
+                <div class="radio-group">
+                    <input type="radio" id="cam-front" name="camera-facing" value="user" checked> <!-- Default checked -->
+                    <label for="cam-front">Front</label>
+                    <input type="radio" id="cam-rear" name="camera-facing" value="environment">
+                    <label for="cam-rear">Back</label>
+                </div>
+            </div>
+
+            <p class="settings-note">Volume changes are immediate. Camera & Duration changes apply on next game start or camera toggle.</p>
+        </div>
+    </div>
+
+    <!-- QR Info Modal -->
+    <div id="qr-info-modal" class="modal"> 
+        <div class="modal-content">
+            <span class="close-button" id="close-qr-info-button">&times;</span>
+            <h2>Game Info & QR Codes</h2>
+
+            <div class="info-section instructions">
+                <h3>How to Play</h3>
+                <p><strong>Goal:</strong> Score points by holding the central base for your team.</p>
+                <ul>
+                    <li>Start the game using the "Start Game" button.</li>
+                    <li>Use the "Show Camera" button to activate your device camera.</li>
+                    <li>Find one of the base QR codes (Red or Blue) shown below.</li>
+                    <li>Point your camera at the QR code for the team you want to capture *for*.</li>
+                    <li><strong>Hold the code steadily in view for 5 seconds</strong> to capture the base.</li>
+                    <li>The team holding the base scores 1 point every 2 seconds.</li>
+                    <li>Capture the base from the opposing team to steal control!</li>
+                    <li>The team with the most points when the timer runs out wins.</li>
+                </ul>
+                <p><strong>Tip:</strong> You cannot capture a base already held by your own team.</p>
+            </div>
+
+            <div class="info-section qr-codes">
+                <h3>Base QR Codes</h3>
+                <p>Scan these codes during the game. You can print this page or display it on another device.</p>
+                <div class="qr-code-pair">
+                    <div class="qr-code-item">
+                        <h4>Red Base</h4>
+                        <img src="media/redteamqrcode.png" alt="QR Code for Red Base" id="qr-red-img">
+                        <p><code>CAPTURE_BASE_RED</code></p>
+                    </div>
+                    <div class="qr-code-item">
+                        <h4>Blue Base</h4>
+                        <img src="media/blueteamqrcode.png" alt="QR Code for Blue Base" id="qr-blue-img">
+                        <p><code>CAPTURE_BASE_BLUE</code></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html> 

@@ -1,0 +1,690 @@
+/* Basic Reset & Body Styling - Military Terminal Theme */
+body, html {
+    margin: 0;
+    padding: 0;
+    /* Monospaced font for radar/terminal feel */
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    height: 100%;
+    /* Change background to black for letterbox bars */
+    background-color: #000; 
+    display: flex; /* Use flexbox for centering */
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    overflow: hidden; /* Prevent scrollbars on body */
+}
+
+/* Main Container - Military Terminal */
+#game-container {
+    /* Remove width/max-width - JS will handle this */
+    /* width: 100%; */
+    /* max-width: 480px; */
+    /* Height will also be set by JS */
+    /* height: 100vh; */ 
+    /* max-height: 100vh; */ 
+    background-color: #0A0A0A; /* Near black */
+    border: 2px solid #4CAF50; /* Tactical Green */
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.3); /* Softer Green Glow */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Crucial */
+    position: relative; /* Keep relative for absolute children */
+    color: #66FF66; /* Lighter Tactical Green for text */
+    /* Add aspect-ratio as a fallback/hint, though JS is primary */
+    aspect-ratio: 9 / 16;
+}
+
+/* Top Bar Styling - Header */
+#top-bar {
+    display: flex;
+    justify-content: space-around; /* Distribute space more evenly */
+    align-items: baseline; /* Align text baselines */
+    padding: 10px 15px; /* Slightly more padding */
+    background-color: #1A1A1A;
+    color: #4CAF50; 
+    border-bottom: 1px solid #4CAF50;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+#score-red, #score-blue {
+    font-size: 1.8em; /* Even larger font size */
+    font-weight: 900; 
+    /* Common styles */
+}
+
+/* Specific Team Colors for Scores */
+#score-red {
+    color: #F44336; /* Red */
+    text-shadow: 0 0 4px #F44336; /* Optional: Add shadow matching color */
+}
+
+#score-blue {
+    color: #2196F3; /* Blue */
+    text-shadow: 0 0 4px #2196F3; /* Optional: Add shadow matching color */
+}
+
+#game-timer {
+    font-size: 1.1em; /* Keep timer slightly smaller */
+    color: #FFBF00; 
+    text-shadow: 0 0 3px #FFBF00;
+}
+
+/* Center Area Layout - Vertical Stack */
+#center-area {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: stretch; /* Make children fill width */
+    padding: 8px;
+    gap: 8px; /* Vertical gap */
+    position: relative;
+    overflow: hidden; 
+    min-height: 0; 
+}
+
+.side-panel {
+    width: 100%; /* Panels take full width now */
+    padding: 10px;
+    background-color: rgba(76, 175, 80, 0.05);
+    border: 1px solid #2E7D32;
+    overflow-y: auto; 
+    font-size: 0.85em; 
+    color: #9CCC65; 
+    /* Remove fixed height, let content or flex define it */
+    /* height: 100%; */ 
+    box-sizing: border-box; 
+    min-height: 0; 
+    flex-shrink: 0; /* Prevent panels from shrinking too much */
+    /* Define some initial height based on content? Or fixed? */
+    /* Example: Set a max-height */
+    max-height: 20%; /* Limit panel height */
+}
+
+.side-panel h2 {
+    margin-top: 0;
+    margin-bottom: 5px;
+    font-size: 1em;
+    color: #66BB6A; /* Medium Green */
+    border-bottom: 1px solid #388E3C;
+    padding-bottom: 3px;
+    text-transform: uppercase;
+}
+
+#camera-container {
+    /* Remove order property */
+    /* order: 2; */ 
+    flex-grow: 1; /* Camera takes remaining vertical space */
+    width: 100%; /* Ensure full width */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background-color: #050505; 
+    border: 1px solid #4CAF50; 
+    overflow: hidden;
+    /* Remove fixed height, flex-grow handles it */
+    /* height: 100%; */ 
+    min-height: 0; 
+}
+
+/* Camera Feed Styling */
+#camera-feed {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    object-fit: cover;
+    /* Optional: Apply a green overlay filter */
+    /* filter: grayscale(100%) brightness(0.8) contrast(1.5) sepia(100%) hue-rotate(60deg); */
+}
+
+/* Transparent Grid Overlay */
+#grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* Don't interfere with interactions */
+    z-index: 1; /* Below scan indicator and team indicator */
+    
+    /* Define grid line color and thickness */
+    --grid-color: rgba(76, 175, 80, 0.25); /* Tactical Green, semi-transparent */
+    --grid-thickness: 1px;
+    /* Define grid spacing */
+    --grid-spacing: 30px;
+
+    background-image: 
+        linear-gradient(to right, var(--grid-color) var(--grid-thickness), transparent var(--grid-thickness)),
+        linear-gradient(to bottom, var(--grid-color) var(--grid-thickness), transparent var(--grid-thickness));
+    background-size: var(--grid-spacing) var(--grid-spacing);
+}
+
+/* Military Scanner Reticle */
+#scan-indicator {
+    position: absolute;
+    width: 70%; 
+    height: 50%; 
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    /* Remove sonar styles */
+    /* border-radius: 50%; */ 
+    /* border: 1px solid rgba(0, 255, 0, 0.5); */
+    /* box-shadow: ... ; */
+    /* overflow: hidden; */
+
+    /* Add crosshairs/brackets */
+    border: none; /* Remove main border */
+    z-index: 2; /* Ensure indicator is above grid */
+}
+
+/* Crosshairs or Corner Brackets */
+#scan-indicator::before, 
+#scan-indicator::after {
+    content: '';
+    position: absolute;
+    background-color: #4CAF50; /* Tactical Green */
+    box-shadow: 0 0 3px rgba(76, 175, 80, 0.5);
+}
+
+/* Simple Crosshairs Example */
+#scan-indicator::before { /* Horizontal */
+    width: 100%;
+    height: 1px;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+#scan-indicator::after { /* Vertical */
+    width: 1px;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Optional: Corner Brackets (More complex, replace crosshairs above if used) */
+/* 
+#scan-indicator::before, #scan-indicator::after {
+    width: 20px;  // Bracket size
+    height: 20px; // Bracket size
+    border-color: #4CAF50;
+    border-style: solid;
+    background: none; // Remove background from crosshair style
+    box-shadow: none; // Remove shadow from crosshair style
+}
+#scan-indicator::before {
+    top: 0; left: 0;
+    border-width: 2px 0 0 2px; // Top and Left borders
+}
+#scan-indicator::after {
+    bottom: 0; right: 0;
+    border-width: 0 2px 2px 0; // Bottom and Right borders
+}
+ // Need two more pseudo-elements (e.g., on #camera-container) for other corners
+*/
+
+/* Team Indicator Styling */
+#team-indicator {
+    position: absolute;
+    top: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.85); 
+    /* Color removed - JS will set based on team */
+    padding: 6px 15px; /* Even more padding */
+    border-radius: 2px; 
+    font-weight: 900; 
+    font-size: 1.5em; /* Even larger */
+    border: 1px solid #FFBF00; /* Keep amber border for default/neutral */
+    min-width: 60px; /* Adjust min width */
+    text-align: center;
+    transition: color 0.3s ease, border-color 0.3s ease; /* Smooth color transition */
+    z-index: 3; /* Ensure team indicator is above grid and scan indicator */
+}
+
+/* Scan Cooldown Bar Styling */
+#scan-cooldown-bar-container { /* Keep position */
+    position: absolute;
+    bottom: 15px;
+    left: 10%;
+    width: 80%;
+    height: 8px; /* Slightly thinner */
+    background-color: rgba(0, 0, 0, 0.5);
+    border: 1px solid #4CAF50; /* Tactical Green */
+    border-radius: 0; /* Sharp corners */
+    overflow: hidden; 
+    z-index: 3; /* Ensure cooldown bar is above grid */
+}
+#scan-cooldown-bar-fill {
+    height: 100%;
+    width: 0%; 
+    background-color: #4A684C; /* Dark Green inactive */
+    transition: width 0.1s linear, background-color 0.2s linear; 
+    border-radius: 0;
+    /* Add subtle texture? */
+    /* background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.1) 75%, transparent 75%, transparent); */
+    /* background-size: 10px 10px; */
+}
+
+/* Adjust fill color during scan */
+/* (This is handled in JS now, but ensure JS uses appropriate colors) */
+/* e.g., JS should set background to #FFBF00 (Amber) during scan */
+/* and #4CAF50 (Green) when ready/scan complete flash */
+
+/* Bottom Bar Styling */
+#bottom-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 8px;
+    background-color: #1A1A1A;
+    border-top: 1px solid #4CAF50; /* Tactical Green */
+}
+#bottom-bar button {
+    padding: 8px 10px;
+    font-size: 0.9em;
+    font-family: inherit; 
+    cursor: pointer;
+    background-color: #0A0A0A;
+    color: #4CAF50; /* Tactical Green text */
+    border: 1px solid #4CAF50; 
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 0; 
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+#bottom-bar button:hover {
+    background-color: #4CAF50; 
+    color: #0A0A0A; 
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+#bottom-bar button:active {
+    background-color: #388E3C; /* Darker Green */
+    color: #0A0A0A;
+}
+
+/* Basic Responsive */
+@media (max-width: 480px) {
+    #game-container {
+        max-width: 100%;
+        max-height: 100%; /* Ensure it uses full screen */
+        border: none; 
+        box-shadow: none;
+    }
+
+    /* Reduce font sizes */
+    #score-red, #score-blue {
+        font-size: 1.3em; /* Reduce score size */
+    }
+    #game-timer {
+        font-size: 0.9em; /* Reduce timer size */
+    }
+    #team-indicator {
+        font-size: 1.1em; /* Reduce center indicator size */
+        padding: 4px 10px;
+        min-width: 40px;
+    }
+    #base-holder {
+        font-size: 1.0em; /* Reduce base holder size */
+    }
+     .side-panel h2 {
+        font-size: 0.9em;
+    }
+
+    /* Reduce padding and gaps */
+    #top-bar {
+        padding: 5px 10px; 
+    }
+    #center-area {
+        padding: 5px;
+        gap: 5px;
+    }
+    .side-panel {
+        padding: 5px;
+        width: 100%; 
+        font-size: 0.75em; 
+        /* Explicitly limit panel height using flex-basis */
+        flex-basis: 18%; /* Give panels ~18% of the center area height */
+        flex-shrink: 0; /* Don't allow shrinking below basis */
+        overflow-y: auto; /* Ensure internal scrolling is enabled */
+    }
+
+    #bottom-bar {
+        padding: 8px 5px; /* Less padding */
+    }
+    #bottom-bar button {
+        padding: 6px 8px;
+        font-size: 0.85em;
+    }
+
+    /* Adjust cooldown bar height */
+    #scan-cooldown-bar-container {
+        height: 6px;
+        bottom: 10px;
+    }
+} 
+
+/* Make Base Holder text more prominent */
+#base-holder {
+    font-size: 1.3em; /* Larger font */
+    font-weight: bold; 
+    margin-top: 10px; 
+    color: #B2FF59; /* Default color (e.g., for 'None') - JS will override */
+} 
+
+/* --- Settings Modal Styles --- */
+.modal {
+    display: none; /* Start hidden - JS will change to flex */
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0, 0, 0, 0.6); 
+    /* display: flex; */ /* Moved to JS */
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #1A1A1A; /* Dark background */
+    margin: auto;
+    padding: 25px;
+    border: 2px solid #4CAF50; /* Tactical Green border */
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+    color: #66FF66; /* Light green text */
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.4);
+}
+
+.close-button {
+    color: #aaa;
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-button:hover,
+.close-button:focus {
+    color: #4CAF50; /* Green on hover */
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.modal h2 {
+    margin-top: 0;
+    color: #4CAF50; /* Green header */
+    text-align: center;
+    border-bottom: 1px solid #388E3C;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.setting-item {
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+    align-items: center;
+    gap: 10px;
+}
+
+.setting-item label {
+    flex-basis: 150px; /* Give labels consistent width */
+    font-weight: bold;
+}
+
+.setting-item input[type="range"] {
+    flex-grow: 1;
+    cursor: pointer;
+}
+
+.setting-item input[type="number"] {
+    background-color: #0A0A0A;
+    color: #66FF66;
+    border: 1px solid #4CAF50;
+    padding: 5px;
+    width: 60px; /* Fixed width for number input */
+    text-align: center;
+}
+
+.setting-item span { /* For volume value display */
+    min-width: 30px;
+    text-align: right;
+    font-weight: bold;
+}
+
+.settings-note {
+    font-size: 0.8em;
+    color: #9CCC65;
+    text-align: center;
+    margin-top: 25px;
+    margin-bottom: 0;
+    font-style: italic;
+}
+
+/* Custom Range Slider Track/Thumb (Optional but nice) */
+input[type=range] {
+  /* Basic reset */
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px; 
+  background: #0A0A0A; 
+  outline: none;
+  opacity: 0.9;
+  transition: opacity .15s ease-in-out;
+  border: 1px solid #4CAF50;
+}
+
+input[type=range]:hover {
+  opacity: 1;
+}
+
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; 
+  height: 20px; 
+  background: #4CAF50; 
+  cursor: pointer; 
+  border-radius: 50%;
+}
+
+input[type=range]::-moz-range-thumb {
+  width: 20px; 
+  height: 20px; 
+  background: #4CAF50; 
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+.radio-group {
+    display: flex;
+    gap: 15px; /* Space between radio options */
+}
+
+.radio-group label {
+    font-weight: normal; /* Radio labels less bold than main setting label */
+    cursor: pointer;
+}
+
+.radio-group input[type="radio"] {
+    cursor: pointer;
+    margin-right: 3px; /* Space between radio and its label */
+}
+
+/* --- QR Info Modal Styles --- */
+
+/* Use existing modal class for base styles (background, position, etc.) */
+#qr-info-modal .modal-content {
+    /* Allow potentially more width than settings */
+    max-width: 600px; 
+    /* Maybe taller if needed due to content */
+    max-height: 90vh; /* Limit height and allow scrolling */
+    overflow-y: auto; /* Enable vertical scroll */
+}
+
+#qr-info-modal h2 {
+    margin-top: 0;
+    color: #4CAF50;
+    text-align: center;
+    border-bottom: 1px solid #388E3C;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#qr-info-modal h3 {
+    color: #66BB6A; 
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #388E3C;
+    padding-bottom: 5px;
+}
+
+.info-section p,
+.info-section li {
+    color: #9CCC65; /* Lighter green for readability */
+    line-height: 1.5;
+    font-size: 0.9em;
+}
+
+.info-section ul {
+    padding-left: 20px; /* Indent list */
+    margin-top: 5px;
+}
+
+.info-section code {
+    background-color: #0A0A0A;
+    padding: 2px 5px;
+    border: 1px solid #388E3C;
+    font-size: 0.85em;
+    color: #FFBF00; /* Amber for code text */
+}
+
+.qr-codes p { /* Paragraph specifically in QR section */
+     text-align: center;
+     margin-bottom: 15px;
+}
+
+.qr-code-pair {
+    display: flex;
+    justify-content: space-around; /* Space out QR codes */
+    align-items: flex-start; /* Align tops */
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 20px; /* Space between items if they wrap */
+}
+
+.qr-code-item {
+    text-align: center;
+    flex-basis: 45%; /* Try to fit two side-by-side */
+    min-width: 150px; /* Minimum width before wrapping */
+}
+
+.qr-code-item h4 {
+    color: #66FF66;
+    margin-bottom: 5px;
+}
+
+.qr-code-item img {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #4CAF50; /* Green border */
+    background-color: white; /* Ensure QR code background is white */
+    padding: 5px; /* Small padding around code */
+    display: block;
+    margin: 0 auto 5px auto; /* Center image */
+}
+
+/* Ensure the close button in this modal is also styled */
+#qr-info-modal .close-button {
+    /* Styles are likely inherited from the generic .close-button, but explicitly state if needed */
+    /* Example: */
+    /* color: #aaa; */
+    /* position: absolute; */
+    /* top: 5px; */
+    /* right: 15px; */
+    /* font-size: 28px; */
+    /* font-weight: bold; */
+}
+
+#qr-info-modal .close-button:hover,
+#qr-info-modal .close-button:focus {
+    /* color: #4CAF50; */
+    /* text-decoration: none; */
+    /* cursor: pointer; */
+}
+
+/* --- Utility Classes --- */
+.hidden {
+    display: none !important; /* Use important to override other display properties */
+}
+
+/* --- Title Screen Styles --- */
+#title-screen {
+    position: absolute; /* Position over other content */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #0A0A0A; /* Match container background */
+    z-index: 50; /* Ensure it's above other game elements */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #4CAF50; /* Tactical Green */
+    padding: 20px; /* Add some padding */
+    box-sizing: border-box;
+}
+
+#title-screen h1 {
+    font-size: 3.5em; /* Large title */
+    color: #66FF66; /* Brighter green */
+    text-shadow: 0 0 10px rgba(76, 175, 80, 0.6);
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#title-screen p {
+    font-size: 1.2em;
+    color: #FFBF00; /* Amber subtitle */
+    text-shadow: 0 0 5px rgba(255, 191, 0, 0.5);
+    margin-top: 0;
+    margin-bottom: 40px; /* Space before button */
+    text-align: center;
+}
+
+#title-screen button {
+    /* Base styles similar to bottom-bar buttons */
+    padding: 15px 30px;
+    font-size: 1.3em;
+    font-family: inherit; 
+    cursor: pointer;
+    background-color: #0A0A0A;
+    color: #4CAF50; /* Tactical Green text */
+    border: 2px solid #4CAF50; 
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 0; 
+    transition: background-color 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+#title-screen button:hover {
+    background-color: #4CAF50; 
+    color: #0A0A0A; 
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+}
+
+#title-screen button:active {
+    background-color: #388E3C; /* Darker Green */
+    color: #0A0A0A;
+} 
